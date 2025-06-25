@@ -9,82 +9,84 @@ import VueRouter from 'unplugin-vue-router/vite'
 import { defineConfig } from 'vite'
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  server: {
-    // 是否监听所有地址
-    host: true,
-    // 端口号
-    port: 3333,
-    // 端口被占用时，是否直接退出
-    strictPort: false,
-    // 是否自动打开浏览器
-    open: true,
-    // 反向代理
-    proxy: {
-      "/api/v1": {
-        target: "https://XXXX",
-        // 是否为 WebSocket
-        // ws: false,
-        // 是否允许跨域
-        changeOrigin: true,
+export default defineConfig(({ mode }) => {
+  return {
+    server: {
+      // 是否监听所有地址
+      host: true,
+      // 端口号
+      port: 3333,
+      // 端口被占用时，是否直接退出
+      strictPort: false,
+      // 是否自动打开浏览器
+      open: true,
+      // 反向代理
+      proxy: {
+        "/api/v1": {
+          target: "https://XXXX",
+          // 是否为 WebSocket
+          // ws: false,
+          // 是否允许跨域
+          changeOrigin: true,
+        },
+      },
+      // 是否允许跨域
+      cors: true,
+      // 预热常用文件，提高初始页面加载速度
+      warmup: {
+        clientFiles: [
+          "./src/layouts/**/*.*",
+          "./src/pinia/**/*.*",
+          "./src/router/**/*.*",
+        ],
       },
     },
-    // 是否允许跨域
-    cors: true,
-    // 预热常用文件，提高初始页面加载速度
-    warmup: {
-      clientFiles: [
-        "./src/layouts/**/*.*",
-        "./src/pinia/**/*.*",
-        "./src/router/**/*.*",
-      ],
-    },
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "src"),
-      "@@": path.resolve(__dirname, "src/common")
-    },
-  },
-
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@use "@/assets/styles/element/index.scss" as *;`,
-        api: 'modern-compiler',
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "src"),
+        "@@": path.resolve(__dirname, "src/common")
       },
     },
-  },
 
-  plugins: [
-    Vue(),
+    css: {
+      preprocessorOptions: {
+        scss: {
+          additionalData: `@use "@/assets/styles/element/index.scss" as *;`,
+          // api: 'modern-compiler',
+        },
+      },
+    },
 
-    // https://github.com/posva/unplugin-vue-router
-    VueRouter({
-      extensions: ['.vue', '.md'],
-      dts: 'src/typed-router.d.ts',
-    }),
+    plugins: [
+      Vue(),
 
-    Components({
-      // allow auto load markdown components under `./src/components/`
-      extensions: ['vue', 'md'],
-      // allow auto import and register components used in markdown
-      include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
-      resolvers: [
-        ElementPlusResolver({
-          importStyle: 'sass',
-        }),
-      ],
-      dts: 'src/components.d.ts',
-    }),
+      // https://github.com/posva/unplugin-vue-router
+      VueRouter({
+        extensions: ['.vue', '.md'],
+        dts: 'src/router/routes/typed-router.d.ts',
+      }),
 
-    // https://github.com/antfu/unocss
-    // see uno.config.ts for config
-    Unocss(),
-  ],
+      Components({
+        // allow auto load markdown components under `./src/components/`
+        extensions: ['vue', 'md'],
+        // allow auto import and register components used in markdown
+        include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
+        resolvers: [
+          ElementPlusResolver({
+            importStyle: 'sass',
+          }),
+        ],
+        dts: 'src/components.d.ts',
+      }),
 
-  ssr: {
-    // TODO: workaround until they support native ESM
-    noExternal: ['element-plus'],
-  },
+      // https://github.com/antfu/unocss
+      // see uno.config.ts for config
+      Unocss(),
+    ],
+
+    ssr: {
+      // TODO: workaround until they support native ESM
+      noExternal: ['element-plus'],
+    },
+  }
 })

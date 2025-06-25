@@ -1,5 +1,5 @@
-import type { UserModule } from './types'
-import { ViteSSG } from 'vite-ssg'
+// import type { UserModule } from './types'
+// import { ViteSSG } from 'vite-ssg'
 
 // import "@/styles/element/index.scss";
 
@@ -8,26 +8,28 @@ import { ViteSSG } from 'vite-ssg'
 // import "element-plus/dist/index.css";
 
 // or use cdn, uncomment cdn link in `index.html`
-
+// import 'element-plus/dist/index.css'
 import router from '@/router/index'
-import { createRouter, createWebHistory } from 'vue-router'
-import App from './App.vue'
 
+import App from './App.vue'
+import { createApp } from "vue";
+
+const app = createApp(App);
 import '@/assets/styles/index.scss'
 
 import 'uno.css'
 // If you want to use ElMessage, import it.
-import 'element-plus/theme-chalk/src/message.scss'
-import 'element-plus/theme-chalk/src/message-box.scss'
+// import 'element-plus/theme-chalk/src/message.scss'
+// import 'element-plus/theme-chalk/src/message-box.scss'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-// if you do not need ssg:
-import { createApp } from "vue";
 
-const app = createApp(App);
 app.use(router)
-// // app.use(ElementPlus);
-app.mount("#app");
 
+app.mount("#app");
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
 // https://github.com/antfu/vite-ssg
 // export const createApp = ViteSSG(
 //   App,
