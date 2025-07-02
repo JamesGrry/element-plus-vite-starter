@@ -32,6 +32,7 @@ declare module 'vue' {
     Layouts: typeof import('./components/layouts/index.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SpcChartEngine: typeof import('./components/SpcChartEngine.vue')['default']
     Table: typeof import('./components/table.vue')['default']
   }
 }

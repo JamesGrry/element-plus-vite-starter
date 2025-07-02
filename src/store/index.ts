@@ -1,3 +1,3 @@
-import { createPinia } from "pinia";
+import { createPinia,defineStore } from "pinia";
 
 export const pinia = createPinia()

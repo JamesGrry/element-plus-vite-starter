@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
       open: true,
       // 反向代理
       proxy: {
-        "/api/v1": {
+        "/api": {
           target: "https://XXXX",
           // 是否为 WebSocket
           // ws: false,

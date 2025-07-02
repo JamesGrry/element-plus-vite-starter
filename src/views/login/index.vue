@@ -15,17 +15,22 @@
             </el-form>
         </div>
         <div class="login-background">
-            <img src="https://picsum.photos/1920/1080" alt=""></img>
+            <!-- <img src="https://picsum.photos/1920/1080" alt=""></img> -->
         </div>
     </div>
 </template>
 
 <script lang="ts" setup>
+import { LoginDataApi } from '@/services/users';
+import { useUserStore } from "@/store/user.store";
+import type { FormInstance } from 'element-plus';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const formRef = ref<FormInstance | null>(null);
 
+const userStore = useUserStore();
 // 登录表单数据
 const loginForm = ref({
     username: '',
@@ -44,13 +49,28 @@ const loginRules = {
     ]
 };
 
-// 提交登录
-function submitLogin() {
+const submitLogin = () => {
+    console.log(formRef.value);
+    if (!formRef.value) return;
     // 这里可以添加实际的登录逻辑，如调用API等
-    console.log('提交登录:', loginForm.value);
+    formRef.value.validate((valid) => {
+        if (valid) {
+            console.log('提交登录:', loginForm.value);
+            // LoginDataApi(loginForm.value).then((res: any) => {
+            // if (res.code === 200) {
+            userStore.setToken("token");
+            userStore.setUsername(loginForm.value.username);
+            router.push('/admin');
+            // }
+            // });
+        } else {
+            console.log('error submit!')
+        }
+    });
     // 模拟登录成功后跳转
-    router.push('/admin');
 }
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -75,10 +95,12 @@ function submitLogin() {
     top: 30%;
     right: 15%;
 }
-.login-background{
+
+.login-background {
     width: 100vw;
     height: 100vh;
-    img{
+
+    img {
         width: 100%;
         height: 100%;
     }

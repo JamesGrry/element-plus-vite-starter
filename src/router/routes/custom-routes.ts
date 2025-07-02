@@ -2,7 +2,12 @@
 export const customRoutes = [
   {
     path: '/admin',
-    component: () => import('@/views/user/index.vue'),
+    component: () => import('@/views/admin/index.vue'),
+    meta: { requiresAuth: true } // 自定义路由元信息
+  },
+  {
+    path: '/admin/users',
+    component: () => import('@/views/admin/users.vue'),
     meta: { requiresAuth: true } // 自定义路由元信息
   },
   {

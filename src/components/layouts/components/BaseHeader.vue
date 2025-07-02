@@ -3,6 +3,14 @@ import { toggleDark } from '@/composables'
 import {
   ArrowDown,
 } from '@element-plus/icons-vue'
+import { useUserStore } from '@/store/user.store'
+import router from '@/router'
+
+const userStore = useUserStore()
+
+const handleClickOut = () => {
+  router.push('/')
+}
 </script>
 
 <template>
@@ -37,7 +45,7 @@ import {
       </a> -->
       <el-dropdown>
         <span class="el-dropdown-link">
-          {{ "未登录" }}
+          {{ userStore.username || "未登录" }}
           <el-icon>
             <ArrowDown />
           </el-icon>
@@ -45,8 +53,8 @@ import {
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item>修改密码</el-dropdown-item>
-            <el-dropdown-item divided>退出登录</el-dropdown-item>
-            <el-dropdown-item>Action 3</el-dropdown-item>
+            <el-dropdown-item divided @click="handleClickOut">退出登录</el-dropdown-item>
+            <!-- <el-dropdown-item>Action 3</el-dropdown-item> -->
           </el-dropdown-menu>
         </template>
       </el-dropdown>
