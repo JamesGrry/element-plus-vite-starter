@@ -5,8 +5,18 @@ import * as Users from '@/services/users/type'
 // 登录
 export function LoginDataApi(data: Users.LoginRequestData) {
   return request({
-    url: "/login",
+    url: "/service/Auth.action",
     method: "post",
-    data
+    data,
+    contentType: "form",
+  })
+}
+
+export function geiSysMenus(data: Users.SysMenusData) {
+  return request({
+    url: "/service/SysMenus.action",
+    method: "post",
+    data,
+    contentType: "form",
   })
 }

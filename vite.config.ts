@@ -23,11 +23,12 @@ export default defineConfig(({ mode }) => {
       // 反向代理
       proxy: {
         "/api": {
-          target: "https://XXXX",
+          target: "http://XXX.XXX.com:8888/api",
           // 是否为 WebSocket
           // ws: false,
           // 是否允许跨域
           changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, '')
         },
       },
       // 是否允许跨域

@@ -1,22 +1,33 @@
 <template>
   <div class="iframe-container">
-    <iframe
-      :src="iframeUrl"
-      class="iframe-content"
-      @load="onIframeLoad"
-    ></iframe>
+    <iframe v-if="iframeUrl.length > 0" :src="iframeUrl" class="iframe-content" @load="onIframeLoad"></iframe>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router'
+const route = useRoute()
 
-const iframeUrl = ref<string>(window.location.search.replace('?url=', '')); // 假设URL作为查询参数传递
+let iframeUrl = ref<string>(''); // 强制类型转换并设置默认值
 
-if (!iframeUrl.value) {
-  // 如果没有URL，则使用默认值
-  iframeUrl.value = 'https://baidu.com';
+
+
+// onMounted(() => {
+//   loadIframe();
+// })
+
+const loadIframe = () => {
+  iframeUrl = ref<string>(route.query.url as string || ''); // 强制类型转换并设置默认值
+  // if (iframeUrl.value.indexOf('/${webroot}') !== -1) {
+  iframeUrl.value = import.meta.env.VITE_BASE_URL + iframeUrl.value;
+  // }
 }
+watch(
+  () => route.query.url as string,
+  (newId: string) => {
+    loadIframe();
+  }, { immediate: true })
 
 // 当iframe加载完成时触发
 function onIframeLoad() {

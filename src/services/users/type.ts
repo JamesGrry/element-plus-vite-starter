@@ -11,6 +11,13 @@ export interface UserData {
 }
 
 export interface LoginRequestData {
-    username: string
+    verb:string,
+    target:string,
+    version:string,
     password: string
+}
+
+export interface SysMenusData {
+    verb:string,
+    target:string,
 }

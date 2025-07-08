@@ -30,6 +30,7 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTag: typeof import('element-plus/es')['ElTag']
     Layouts: typeof import('./components/layouts/index.vue')['default']
+    MenuItem: typeof import('./components/layouts/components/MenuItem.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SpcChartEngine: typeof import('./components/SpcChartEngine.vue')['default']

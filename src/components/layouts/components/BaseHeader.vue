@@ -14,8 +14,8 @@ const handleClickOut = () => {
 </script>
 
 <template>
-  <el-menu class="el-menu-demo" mode="horizontal" :ellipsis="false" router>
-    <el-menu-item index="/">
+  <el-menu class="el-menu-demo" mode="horizontal" :ellipsis="false" :default-active="'none'">
+    <el-menu-item index="/logo">
       <div class="flex items-center justify-center gap-2">
         <img src="@/assets/vue.svg" alt="logo" />
         <span>ADC数据服务系统</span>
@@ -33,13 +33,13 @@ const handleClickOut = () => {
       Orders
     </el-menu-item> -->
 
-    <el-menu-item h="full" @click="toggleDark()">
+    <el-menu-item h="full" @click="toggleDark()" index="/toggleDark">
       <button class="w-full cursor-pointer border-none bg-transparent" style="height: var(--yd-menu-item-height)">
         <i inline-flex i="dark:ep-moon ep-sunny" />
       </button>
     </el-menu-item>
 
-    <el-menu-item h="full">
+    <el-menu-item h="full" index="/user">
       <!-- <a class="size-full flex items-center justify-center" :href="repository.url" target="_blank">
         <div i-ri-github-fill />
       </a> -->
@@ -66,6 +66,12 @@ const handleClickOut = () => {
 .el-menu-demo {
   &.yd-menu--horizontal>.yd-menu-item:nth-child(1) {
     margin-right: auto;
+  }
+
+  .yd-menu-item.is-active {
+    border-bottom: none !important;
+    color: inherit !important;
+    background-color: transparent !important;
   }
 }
 </style>

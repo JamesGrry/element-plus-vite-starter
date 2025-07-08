@@ -27,19 +27,16 @@ const router = createRouter({
             component: () => import('@/components/layouts/index.vue'),
             children: [...autoRoutes, ...customRoutes],
         },
-        // {
-        //     path: '/login',
-        //     component: () => import('@/views/login/index.vue') // 登录页面
-        // },
         {
             path: '/:catchAll(.*)',
-            redirect: '/404'
-            // component: () => import('@/views/error/404.vue') // 404页面
+            // redirect: '/404'
+            name: 'NotFound',
+            component: () => import('@/views/error/404.vue')
         }
     ]
 })
 
-export default router
-
 // 注册路由导航守卫
 registerNavigationGuard(router)
+
+export default router

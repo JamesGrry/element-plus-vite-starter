@@ -2,6 +2,7 @@ import features from '@/config/features'
 // import router from "@/router/index"
 import type { Router } from "vue-router"
 import { isWhiteList } from "@/router/whitelist"
+import { el } from 'element-plus/es/locales.mjs'
 
 // 登录路由
 const LOGIN_PATH = '/login'
@@ -12,9 +13,11 @@ export default function registerNavigationGuard(router: Router) {
         router.beforeEach((to, from, next) => {
             const userStore = { token: '123' }
             const isLogin = !!userStore.token
+
             if (to.path !== LOGIN_PATH && !isLogin && !isWhiteList(to)) {
                 next(LOGIN_PATH)
             } else {
+
                 next()
             }
         })
@@ -25,3 +28,11 @@ export default function registerNavigationGuard(router: Router) {
         })
     }
 }
+
+// const someIframeCondition = (path: string) => {
+//     return path.startsWith('/${webroot}')
+// }
+
+// const someLocalRouterCondition = (path: string) => {
+//     return path.startsWith('${webroot}/#')
+// }

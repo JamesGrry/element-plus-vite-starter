@@ -3,11 +3,12 @@
         <div class="login-form">
             <h2>登录</h2>
             <el-form :model="loginForm" :rules="loginRules" ref="formRef" label-position="right">
-                <el-form-item label="用户名" prop="username" label-width="80px">
-                    <el-input v-model="loginForm.username" />
+                <el-form-item label="用户名" prop="account" label-width="80px">
+                    <el-input v-model="loginForm.account" ref="accountRef" @keyup.enter="focusNext('passwordInput')" />
                 </el-form-item>
                 <el-form-item label="密码" prop="password" label-width="80px">
-                    <el-input v-model="loginForm.password" type="password" show-password />
+                    <el-input v-model="loginForm.password" type="password" ref="passwordInput" show-password
+                        @keyup.enter="submitLogin" />
                 </el-form-item>
                 <el-form-item class="login-btn">
                     <el-button type="primary" @click="submitLogin">登录</el-button>
@@ -15,7 +16,7 @@
             </el-form>
         </div>
         <div class="login-background">
-            <!-- <img src="https://picsum.photos/1920/1080" alt=""></img> -->
+            <img src="https://picsum.photos/1920/1080" alt=""></img>
         </div>
     </div>
 </template>
@@ -23,29 +24,31 @@
 <script lang="ts" setup>
 import { LoginDataApi } from '@/services/users';
 import { useUserStore } from "@/store/user.store";
-import type { FormInstance } from 'element-plus';
+import type { ElInput, FormInstance } from 'element-plus';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+type InputRef = InstanceType<typeof ElInput>
 
 const router = useRouter();
 const formRef = ref<FormInstance | null>(null);
+const passwordInput = ref<InputRef | null>(null);
 
 const userStore = useUserStore();
 // 登录表单数据
 const loginForm = ref({
-    username: '',
+    account: '',
     password: ''
 });
 
 // 表单验证规则
 const loginRules = {
-    username: [
+    account: [
         { required: true, message: '请输入用户名', trigger: 'blur' },
         { min: 3, max: 15, message: '用户名长度在3到15个字符', trigger: 'blur' }
     ],
     password: [
         { required: true, message: '请输入密码', trigger: 'blur' },
-        { min: 6, max: 20, message: '密码长度在6到20个字符', trigger: 'blur' }
+        { min: 3, max: 20, message: '密码长度在3到20个字符', trigger: 'blur' }
     ]
 };
 
@@ -56,18 +59,27 @@ const submitLogin = () => {
     formRef.value.validate((valid) => {
         if (valid) {
             console.log('提交登录:', loginForm.value);
-            // LoginDataApi(loginForm.value).then((res: any) => {
-            // if (res.code === 200) {
-            userStore.setToken("token");
-            userStore.setUsername(loginForm.value.username);
-            router.push('/admin');
-            // }
-            // });
+            LoginDataApi({
+                verb: 'get',
+                target: 'login',
+                version: '--',
+                ...loginForm.value
+            }).then((res: any) => {
+                if (res.success === true) {
+                    userStore.setToken("token");
+                    userStore.setUsername(loginForm.value.account);
+                    router.push('/admin');
+                }
+            });
         } else {
             console.log('error submit!')
         }
     });
-    // 模拟登录成功后跳转
+}
+
+
+const focusNext = (ref: String) => {
+    passwordInput.value?.focus();
 }
 
 

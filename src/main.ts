@@ -20,8 +20,8 @@ import '@/assets/styles/index.scss'
 
 import 'uno.css'
 // If you want to use ElMessage, import it.
-// import 'element-plus/theme-chalk/src/message.scss'
-// import 'element-plus/theme-chalk/src/message-box.scss'
+import 'element-plus/theme-chalk/src/message.scss'
+import 'element-plus/theme-chalk/src/message-box.scss'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 // 定义视口检测指令
 app.directive('viewport', {

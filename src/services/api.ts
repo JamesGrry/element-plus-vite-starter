@@ -4,6 +4,7 @@ import axios from "axios"
 import { get, merge } from "lodash-es"
 import { ElMessage } from "element-plus"
 import features from "@/config/features"
+import { RequestOptions } from "./type"
 // import { useUserStore } from "@/pinia/stores/user"
 
 /** 退出登录并强制刷新页面（会重定向到登录页） */
@@ -31,29 +32,34 @@ function createInstance() {
       // 二进制数据则直接返回
       const responseType = response.request?.responseType
       if (responseType === "blob" || responseType === "arraybuffer") return apiData
-      // 这个 code 是和后端约定的业务 code
-      const code = apiData.code
-      // 如果没有 code, 代表这不是项目后端开发的 api
-      if (code === undefined) {
-        if (features.enableAxiosErrorToast) {
-          ElMessage.error("非本系统的接口")
-        }
-        return Promise.reject(new Error("非本系统的接口"))
+      if (apiData.success) {
+        return apiData
+      } else {
+        ElMessage.error(apiData.message || "Error")
       }
-      switch (code) {
-        case 200:
-          // 本系统采用 code === 200 来表示没有业务错误
-          return apiData
-        case 401:
-          // Token 过期时
-          return logout()
-        default:
-          // 不是正确的 code
-          if (features.enableAxiosErrorToast) {
-            ElMessage.error(apiData.message || "Error")
-          }
-          return Promise.reject(new Error("Error"))
-      }
+      // // 这个 code 是和后端约定的业务 code
+      // const code = apiData.code
+      // // 如果没有 code, 代表这不是项目后端开发的 api
+      // if (code === undefined) {
+      //   if (features.enableAxiosErrorToast) {
+      //     ElMessage.error("非本系统的接口")
+      //   }
+      //   return Promise.reject(new Error("非本系统的接口"))
+      // }
+      // switch (code) {
+      //   case 200:
+      //     // 本系统采用 code === 200 来表示没有业务错误
+      //     return apiData
+      //   case 401:
+      //     // Token 过期时
+      //     return logout()
+      //   default:
+      //     // 不是正确的 code
+      //     if (features.enableAxiosErrorToast) {
+      //       ElMessage.error(apiData.message || "Error")
+      //     }
+      //     return Promise.reject(new Error("Error"))
+      // }
     },
     (error) => {
       // status 是 HTTP 状态码
@@ -106,19 +112,25 @@ function createInstance() {
   return instance
 }
 
+
+
 /** 创建请求方法 */
 function createRequest(instance: AxiosInstance) {
-  return <T>(config: AxiosRequestConfig): Promise<T> => {
+  return <T>(config: RequestOptions): Promise<T> => {
     const token = getToken()
+    const {
+      contentType = 'json',
+      needToken = true,
+      headers: customHeaders,
+      ...rest
+    } = config
     // 默认配置
     const defaultConfig: AxiosRequestConfig = {
       // 接口地址
       baseURL: import.meta.env.VITE_BASE_URL,
       // 请求头
       headers: {
-        // 携带 Token
-        "Authorization": token ? `Bearer ${token}` : undefined,
-        "Content-Type": "application/json"
+        ...getHeaders(contentType, needToken),
       },
       // 请求体
       data: {},
@@ -130,6 +142,36 @@ function createRequest(instance: AxiosInstance) {
     // 将默认配置 defaultConfig 和传入的自定义配置 config 进行合并成为 mergeConfig
     const mergeConfig = merge(defaultConfig, config)
     return instance(mergeConfig)
+  }
+}
+
+export function getHeaders(type: 'json' | 'form' | 'upload' | 'custom' = 'json', needToken = true): Record<string, string> {
+  const token = getToken()
+
+  const base: Record<string, string> = {}
+  if (needToken && token) {
+    base['Authorization'] = `Bearer ${token}`
+  }
+
+  switch (type) {
+    case 'json':
+      return {
+        ...base,
+        'Content-Type': 'application/json'
+      }
+    case 'form':
+      return {
+        ...base,
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    case 'upload':
+      return {
+        ...base,
+        'Content-Type': 'multipart/form-data'
+      }
+    case 'custom':
+    default:
+      return base
   }
 }
 
